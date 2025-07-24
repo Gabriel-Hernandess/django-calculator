@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+{% load static %}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Landing Page</title>
+  <link rel="stylesheet" href="{% static 'index.css' %}" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon" />
+</head>
+<body>
+  <main class="container">
+    <section class="content">
+      <div class="left">
+        <h1>Bem-vindo(a) á Calculadora Avançada</h1>
+        <p>Acesse sua conta para inciar os cálculos!</p>
+        <a href="/login" class="btn">Entrar</a>
+      </div>
+      <div class="right">
+        <img src="https://cdn-icons-png.flaticon.com/512/4341/4341087.png" alt="Imagem ilustrativa" />
+      </div>
+    </section>
+  </main>
+</body>
+</html>
