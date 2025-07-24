@@ -1,9 +1,179 @@
-<!-- templates/calculator.html -->
 <!DOCTYPE html>
-<html>
-<head><title>Calculadora</title></head>
+<html lang="pt-BR">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora Avançada</title>
+    <link rel="stylesheet" href="{% static 'calculator.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
 <body>
-  <h1>Bem-vindo, {{ request.session.usuario_nome }}</h1>
-  <p>Esta é a página da calculadora.</p>
+  <div class="container">
+    <div class="header">
+        <h4>Bem vindo de volta, {{ request.session.usuario_nome }}!</h4>
+        <button class="logout-btn" onclick="logout()">Sair<i class="fas fa-sign-out-alt" style="margin-left: 8px;"></i></button>
+    </div>
+
+    <input type="text" id="display" readonly>
+
+    <div class="calculator-container">
+        <div class="calculator">
+            <div class="buttons">
+                <button class="clear-btn" onclick="clearDisplay()">C</button>
+                <button onclick="toggleSign()">±</button>
+                <button onclick="append('%')">%</button>
+                <button class="custom-btn" onclick="append('/')">/</button>
+                
+                <button onclick="append('7')">7</button>
+                <button onclick="append('8')">8</button>
+                <button onclick="append('9')">9</button>
+                <button class="custom-btn" onclick="append('*')">x</button>
+
+                <button onclick="append('4')">4</button>
+                <button onclick="append('5')">5</button>
+                <button onclick="append('6')">6</button>
+                <button class="custom-btn" onclick="append('-')">-</button>
+
+                <button onclick="append('1')">1</button>
+                <button onclick="append('2')">2</button>
+                <button onclick="append('3')">3</button>
+                <button class="custom-btn" onclick="append('+')">+</button>
+
+                <button style="grid-column: span 2;" onclick="append('0')">0</button>
+                <button onclick="append('.')">.</button>
+                <button class="custom-btn" onclick="calculate()">=</button>
+            </div>
+        </div>
+
+        <div class="sidebar open" id="sidebar">
+            <div class="sidebar-header">
+                <button class="toggle-btn" onclick="toggleSidebar()">
+                    <i id="chevron" class="fas fa-chevron-left" style="color: #ededed"></i>
+                </button>
+
+                <span class="sidebar-title">Histórico</span>
+
+                <button class="clear-btn" onclick="clearHistory()" style="color: #ededed">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            <ul id="historyList"></ul>
+        </div>
+    </div>
+  </div>
+
+    {{ operacoes|json_script:"dados_operacoes" }}
+    <script>
+        const historicoOperacoes = JSON.parse(document.getElementById('dados_operacoes').textContent);
+
+        function historico(){
+            const historicoDiv = document.getElementById('historyList');
+
+            historicoOperacoes.forEach(op => {
+                const linha = document.createElement('div');
+                linha.textContent = `${op.Parametros} = ${op.Resultado}`;
+                historicoDiv.appendChild(linha);
+            });
+        }
+
+        historico();
+    </script>
+
+    <script>
+        const display = document.getElementById('display');
+        const historyList = document.getElementById('historyList');
+
+        function append(char) {
+            display.value += char;
+        }
+
+        function clearDisplay() {
+            display.value = '';
+        }
+
+        function del() {
+            display.value = display.value.slice(0, -1);
+        }
+
+        function toggleSign() {
+            const display = document.getElementById('display');
+            if (display.value.startsWith('-')) {
+                display.value = display.value.slice(1);
+            } else if (display.value !== '') {
+                display.value = '-' + display.value;
+            }
+        }
+
+        async function calculate() {
+            const result = eval(display.value);
+            const expression = display.value;
+            historyList.innerHTML += `<div>${display.value} = ${result}</div>`;
+            display.value = result;
+
+            try {
+                const response = await fetch('/novo-registro/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCSRFToken(),
+                    },
+                    body: JSON.stringify({
+                        expressao: expression,
+                        resultado: result,
+                        usuarioId: `{{ request.session.usuario_id }}`
+                    })
+                });
+
+                if (!response.ok) {
+                    console.error('Erro ao salvar operação no backend:', await response.text());
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const chevron = document.getElementById('chevron');
+            
+            sidebar.classList.toggle('closed');
+            chevron.classList.toggle('fa-chevron-left');
+            chevron.classList.toggle('fa-chevron-right');
+        }
+
+        async function clearHistory() {
+            if (!confirm('Tem certeza que deseja excluir todo o histórico?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/limpar-registros/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCSRFToken(),
+                    }
+                });
+
+                if (response.ok) {
+                    document.getElementById('historyList').innerHTML = '';
+                    alert('Histórico limpo com sucesso!');
+                } else {
+                    alert('Erro ao limpar histórico.');
+                    console.error('Erro ao limpar histórico:', await response.text());
+                }
+            } catch (error) {
+                alert('Erro na requisição.');
+                console.error('Erro na requisição:', error);
+            }
+        }
+
+        function getCSRFToken() {
+            return document.cookie
+                .split('; ')
+                .find(row => row.startsWith('csrftoken='))
+                ?.split('=')[1];
+        }
+    </script>
 </body>
 </html>
