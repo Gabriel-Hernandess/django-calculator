@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 
-from django.contrib.auth import authenticate, login, logout
 from .decorators import login_required_custom
 from django.contrib import messages
 from django.db import IntegrityError
@@ -26,7 +25,7 @@ def login_page(request):
 
             return redirect('calculator')
         except Usuario.DoesNotExist:
-            return render(request, 'login.html', {'msg': 'Email ou senha incorreto'})
+            return render(request, 'login.html', {'msg': 'Confira os dados e tente novamente.'})
         
 def cadastro(request):
     if request.method == 'GET':
@@ -37,8 +36,11 @@ def cadastro(request):
         email = request.POST.get('email')
         senha = request.POST.get('senha')
 
+        if not all([nome, email, senha]):
+            return render(request, 'cadastro.html', {'msg': 'Confira os dados e tente novamente.'})
+
         if Usuario.objects.filter(Email=email).exists():
-            return HttpResponse('USUÁRIO JÁ CADASTRADO')
+            return render(request, 'cadastro.html', {'msg': 'Email já está em uso.'})
 
         try:
             Usuario.objects.create(Nome=nome, Email=email, Senha=senha)

@@ -5,8 +5,20 @@
   <meta charset="UTF-8">
   <title>Página de Login</title>
   <link rel="stylesheet" href="{% static 'login.css' %}">
+
+  <!-- Favicon -->
+  <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon" />
 </head>
 <body>
+  <div class="header">
+    <div>
+      <h3 style="margin-bottom: 8px;">Calculadora Avançada</h3>
+      <p style="margin: 0;">A Django Kogui Test.</p>
+    </div>
+
+    <img src="https://cdn-icons-png.flaticon.com/512/4341/4341087.png" />
+  </div>
+
   <div class="login-container">
     <h2>Login</h2>
 
@@ -15,10 +27,12 @@
         <input type="text" id="email" name="email" placeholder="Email" required>
         <input type="password" id="senha" name="senha" placeholder="Senha" required>
 
-        <p>{{ msg|default:'' }}</p>
+        <p style="color: crimson;">{{ msg|default:'' }}</p>
         
         <button type="submit">Entrar</button>
     </form>
+
+    <p>Não possui uma conta?<a href="/cadastro" style="margin-left: 5px;">Cadastre já!</a></p>
   </div>
 
   <script>
