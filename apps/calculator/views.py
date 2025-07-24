@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+from django.utils.decorators import method_decorator
+from django.views import View
 from django.http import JsonResponse
 import json
 
@@ -6,12 +8,13 @@ from ..core.decorators.decorators import login_required_custom
 from .models import Usuario
 from ..users.models import Operacao
 
-def index(request):
-    return render(request, 'index.html')
+class Index_View(View):
+    def get(self, request):
+        return render(request, 'index.html')
 
-@login_required_custom
-def calculator_page(request):
-    if request.method == 'GET':
+@method_decorator(login_required_custom, name='dispatch')
+class Calculator_View(View):
+    def get(self, request):
         usuario_id = request.session.get('usuario_id')
 
         try:
@@ -24,9 +27,9 @@ def calculator_page(request):
 
         return render(request, 'calculator.html', {'operacoes': operacoes})
 
-@login_required_custom
-def novo_registro(request):
-    if request.method == 'POST':
+@method_decorator(login_required_custom, name='dispatch')
+class Novo_registro(View):
+    def post(self, request):
         try:
             data = json.loads(request.body)
 
@@ -50,11 +53,13 @@ def novo_registro(request):
             return JsonResponse({'success': True})
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
-    return JsonResponse({'error': 'Método não permitido'}, status=405)
+    
+    def get(self, request):
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
 
-@login_required_custom
-def limpar_registros(request):
-    if request.method == 'POST':
+@method_decorator(login_required_custom, name='dispatch')
+class Limpar_Registros(View):
+    def post(self, request):
         usuario_id = request.session.get('usuario_id')
         if not usuario_id:
             return JsonResponse({'error': 'Usuário não autenticado'}, status=401)
@@ -62,4 +67,5 @@ def limpar_registros(request):
         Operacao.objects.filter(Usuario_id=usuario_id).delete()
         return JsonResponse({'success': True})
 
-    return JsonResponse({'error': 'Método não permitido'}, status=405)
+    def get(self, request):
+        return JsonResponse({'error': 'Método não permitido'}, status=405)

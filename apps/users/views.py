@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+from django.views import View
+from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.db import IntegrityError
 
@@ -6,13 +8,13 @@ from ..core.decorators.decorators import *
 from .models import Usuario
 
 # Create your views here.
-def login_page(request):
-    if request.method == 'GET':
+class Login_View(View):
+    def get(self, request):
         if request.session.get('usuario_id'):
             return redirect('calculator')
         return render(request, 'login.html', status=200)
     
-    elif request.method == 'POST':
+    def post(self, request):
         email = request.POST.get('email')
         senha = request.POST.get('senha')
 
@@ -26,13 +28,13 @@ def login_page(request):
         except Usuario.DoesNotExist:
             return render(request, 'login.html', {'msg': 'Confira os dados e tente novamente.'})
         
-def cadastro(request):
-    if request.method == 'GET':
+class Register_View(View):
+    def get(self, request):
         if request.session.get('usuario_id'):
             return redirect('calculator')
         return render(request, 'cadastro.html')
     
-    elif request.method == 'POST':
+    def post(self, request):
         nome = request.POST.get('nome')
         email = request.POST.get('email')
         senha = request.POST.get('senha')
@@ -54,7 +56,8 @@ def cadastro(request):
         except IntegrityError:
             messages.error(request, 'Email já cadastrado.')
 
-@login_required_custom
-def logout_user(request):
-    request.session.flush()
-    return redirect('login')
+method_decorator(login_required_custom, name='dispatch')
+class Logout_User(View):
+    def post(self, request):
+        request.session.flush()
+        return redirect('login')
