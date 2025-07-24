@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Usuário</title>
+    <link rel="stylesheet" href="{% static 'cadastro.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h2>Cadastro de Usuário</h2>
+        <form method="POST" action="/cadastro/">
+            {% csrf_token %}
+            <input type="text" name="nome" placeholder="Nome completo" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="senha" placeholder="Senha" required>
+            <button type="submit">Cadastrar</button>
+        </form>
+        <p>Já possui conta? <a href="/login/">Faça login</a></p>
+    </div>
+</body>
+</html>

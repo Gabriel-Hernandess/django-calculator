@@ -1,36 +1,27 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <title>Página de Login</title>
-  <link rel="stylesheet" href="{{ 'static', url_for('login.css') }}">
+  <link rel="stylesheet" href="{% static 'login.css' %}">
 </head>
 <body>
   <div class="login-container">
     <h2>Login</h2>
-    
-    <input type="text" id="username" placeholder="Usuário">
-    <input type="password" id="password" placeholder="Senha">
-    
-    <button onclick="login()">Entrar</button>
-    
-    <p id="message"></p>
+
+    <form action="/login/" method="POST">
+        {% csrf_token %}
+        <input type="text" id="email" name="email" placeholder="Email" required>
+        <input type="password" id="senha" name="senha" placeholder="Senha" required>
+
+        <p>{{ msg|default:'' }}</p>
+        
+        <button type="submit">Entrar</button>
+    </form>
   </div>
 
   <script>
-    function login() {
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-      const message = document.getElementById('message');
-
-      if (username === "admin" && password === "1234") {
-        message.textContent = "Login realizado com sucesso!";
-        message.style.color = "green";
-      } else {
-        message.textContent = "Usuário ou senha inválidos.";
-        message.style.color = "red";
-      }
-    }
   </script>
 </body>
 </html>
