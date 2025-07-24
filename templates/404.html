@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Página não encontrada</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #fff;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .error-container {
+      display: flex;
+      max-width: 900px;
+      width: 100%;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .error-content {
+      max-width: 50%;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .error-content h1 {
+      font-size: 100px;
+      margin: 0;
+      color:rgb(94, 16, 158);
+    }
+    .error-content h2 {
+      font-size: 32px;
+      margin: 10px 0;
+    }
+    .error-content p {
+      font-size: 18px;
+      margin-bottom: 30px;
+    }
+    .btn-voltar {
+      display: inline-block;
+      padding: 12px 24px;
+      background: linear-gradient(90deg, hsla(205, 46%, 30%, 1) 0%, hsla(260, 29%, 36%, 1) 100%);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: background 0.3s;
+      width: fit-content;
+    }
+    .btn-voltar:hover {
+      background-color: #2980b9;
+    }
+    .error-img {
+      max-width: 50%;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .error-img img {
+      max-width: 100%;
+      height: auto;
+    }
+    @media (max-width: 768px) {
+      .error-container {
+        flex-direction: column;
+      }
+      .error-content, .error-img {
+        max-width: 100%;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="error-container">
+    <section class="error-content">
+      <h1>404</h1>
+      <h2>Oops! Página não encontrada</h2>
+      <p>A página que você está tentando acessar não existe ou foi movida.</p>
+      <a href="/" class="btn-voltar">Voltar ao início</a>
+    </section>
+    <div class="error-img">
+      <img src="https://cdn3d.iconscout.com/3d/premium/thumb/error-404-3d-icon-download-in-png-blend-fbx-gltf-file-formats--emoji-pack-seo-web-icons-7122236.png" alt="Erro 404" />
+    </div>
+  </main>
+</body>
+</html>
